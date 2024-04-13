@@ -1,0 +1,386 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{natbib}
+%\usepackage{biblatex-chicago}
+\colorlet{savered}{red}
+
+\usepackage{geometry, amsmath, amsthm, latexsym, amssymb}
+\newcommand\myeq{\mathrel{\stackrel{\makebox[0pt]{\mbox{\normalfont\tiny d}}}{=}}}
+\newcommand{\dd}[1]{\mathrm{d}#1}
+
+
+\geometry{margin=1in, headsep=0.25in}
+
+\parskip 12pt
+\title{Expanding the multivariate leptokurtic normal distribution\\ to the high-dimensional clustering and factor analysis}
+\author{Sohoon Youn}
+\date{May 2023}
+
+\newcommand{\vecbeta}{\mbox{\boldmath$\beta$}}
+
+\begin{document}
+\colorlet{red}{savered}
+
+\maketitle
+\textbf{Abstract}\\
+\\
+The finite mixture of multivariate leptokurtic-normal distributions is a flexible model based on mixtures of elliptical heavy-tailed distributions. However, the model's large number of parameters for estimation becomes computationally challenging, particularly in high-dimensional data. To address this issue, two procedures for the covariance structure are proposed. The first approach is based on the factor analyzers, while the second is based on a high-dimensional data clustering. Each methodology will be demonstrated with numerical experiments.
+\section{Introduction}
+Clustering is a widely used data analysis methodology employed to group data into several homogeneous groups. Its applications span various scientific fields \citep{yan2012research}, where understanding and interpreting data patterns are vital. However, the challenge intensifies when dealing with high-dimensional data. The $\emph{curse of dimensionality}$ arises, leading to deteriorating performance as dimensions increases. Additionally, limited observations compared to the number of variables, further complicate the clustering task.\\ 
+\\
+To address these challenges, it is crucial to find a balance between the number of parameters to estimate and the generality of the model. We propose multivariate leptokurtic normal (MLN) mixtures that involve the specific subspace in which each cluster is located. Regarding subspace clustering for the MLN mixtures, a factor analyzer (FA) and high-dimensional data clustering (HDC) have been suggested in this paper.\\
+\\
+We estimate MLN mixture parameters using the Expectation-Maximization (EM) algorithm, as discussed by \cite{dempster1977maximum}. The Bayesian Information Criterion (BIC) is used, as discussed by \citep{schwarz1978estimating}, to determine the number of factors in factor analysis and the intrinsic dimension of each cluster in HDC. These approaches give rise to a robust clustering method in high-dimensional spaces. Moreover, to further constrain the number of parameters, it can involve additional assumptions, such as parameter sharing across components.\\
+\\
+This paper is organized as follows. Section 2 presents the brief overivew of background materials. Section 3 introduces the methodologies; i.e. factor analysis and high dimensional data clustering. Section 4 suggests the parameter estimation via EM algorithm. Analyses on simulations are reported in Section 5. 
+\section{Background}
+\textbf{2.1 Model-based clustering with high-dimensional data}\\
+\\
+Model-based clustering is a well-known and flexible methodology for its probabilistic principles. However, it tends to perform poorly when applied to high-dimensional data. With the increasing complexity in the data sets, model-based clustering methods have suffered from the $\emph{curse of dimens}$ $\emph{ionality}$ due to the over-parametrization of the model. There may exist subspaces with lower dimensions than the original space, $\emph{Empty space phenomenon}$, which can result in disappointing performance in high dimensional data. To address this issue, dimension reduction methods, such as principal component analysis and factor analysis, as well as feature selection methods, are suggested as possible solutions. However, these methodologies may result in information loss, which can be critical in some cases. Several methods have been proposed to allow model-based methods to efficiently cluster high-dimensional data. They involve subspace clustering, constrained and parsimonious models \citep{mcnicholas2008parsimonious}, regularization, and variable selection \citep{bouveyron2007high}. In this paper, we aim to group data into several homogeneous groups more precisely via subspace clustering, specifically factor analysis model \citep{mcnicholas2008parsimonious} and high-dimensional data clustering \citep{kim2019subspace}.
+\\ \\
+\textbf{2.2 Finite mixture models}\\
+\\
+Finite mixture models are a mixture of probability distributions, each representing a cluster within the data. In this study, a data set of $n$ observations $\{x_1,..,x_n\}\in\mathbb{R}^p$ is considered to be divided into G homogeneous group. To estimate the cluster membership of each observation, we introduce the concept of missing data, denoted as $z_{ig}$, where $z_{ig}$ is 1 if observation $i$ belongs to group $g$, and 0 otherwise.\\
+\\
+The model-based clustering considers the overall population as a mixture of these groups, with each component represented by a conditional probability distribution. Thus, a G-component finite mixture model g($\bold{x}$) can be formulated as follows:
+$$g(\bold{x}) = \sum_{g=1}^{G}\pi_gf_g(\bold{x}|\boldsymbol{\theta}_g); \quad \sum_{g=1}^{G}\pi_g = 1 \quad \text{for all} \:\: \pi_g, \:\: \pi_g > 0,$$
+where $\pi_g$ are the $g$th mixture proportion, and $f_g$ are the conditional density function of $g$th mixture component with the parameter vector $\boldsymbol{\theta}_g$, for g = 1, ..., G. The finite mixture models have several advantages. They can effectively model complex data distributions by combining component densities with appropriate mixing proportions. Additionally, they can accommodate various types of distributions, allowing for flexibility in capturing diverse patterns present in the data.\\ \\
+In this paper, we assume that the component densities follow the MLN distribution. The identifiability of finite mixture of the MLN distributions is proved by \citet{browne2022revitalizing}. 
+\\ \\
+\textbf{2.3 Multivariate leptokurtic normal distribtuion}\\
+\\
+The MLN distribution, introduced by \citet{bagnato2017multivariate}, has the following joint probability density function
+\\
+$$f(\bold{x}|\boldsymbol{\mu,\Sigma},\beta) = [1+\beta g((\boldsymbol{\bold{x}-\mu})^\top\boldsymbol{\Sigma}^{-1}(\boldsymbol{\bold{x}-\mu}))]\phi(\boldsymbol{\bold{x}|\mu,\Sigma})$$
+\\
+where $\phi(\cdot)$ represents joint pdf of the multivariate normal distribution with mean $\boldsymbol{\mu}$, covariacne matrix $\boldsymbol{\Sigma},$ excess kurtosis $\beta$, and 
+$$g(r) = \frac{r^2-2(d+2)r+d(d+2)}{8d(d+2)},$$
+$$\beta \in \Biggl[0,\frac{4d(d+1)}{d+4}\Biggr].$$
+\\ \\ 
+The MLN distribution is generated by applying a multivariate Gram-Charlier expansion to the multivariate normal distribution with one additional parameter for the kurtosis. With the excess kurtosis $\beta$, the MLN distribution makes a more general elliptical distribution with the desired amount of excess kurtosis. Browne(2022) gave a range for $\beta \in$ [0, 4d(d+2)/(d+4)] in which the MLN is distribution unimodal. It is desirable for the component densities to be unimodal for model based clustering. This distribution can be characterized by parameters directly corresponding to the moments of interest, particularly in each cluster.\\
+\\
+\textbf{2.4 Factor analysis}\\
+\\
+Factor analysis (for details see \cite{bartholomew2011latent} and \cite{spearman1961proof}) is a method for modeling observed variables via a linear combination of unobservable latent factors. This approach offers several advantages, particularly in terms of data reduction and data interpretation. It can reduce a large number of variables into fewer numbers of factors, which leads to lower computational complexity. Additionally, it enables the explanation of the variability among important variables in terms of a reduced number of unobserved factors.\\
+\\
+In factor analysis, \cite{mcnicholas2008parsimonious} considered parsimonious forms when each component of a mixture model had a factor model. A p-dimensional random vector $\bold{x}$ can be modelled through a q-dimensional vector of unobserved latent factors u, where q $\ll$ p. By default, the number of factors q must respect $(p-q)^2$ $>$ p+q, where p is the number of variables. Here, we take a random vector $\bold{x}$ as observed variables. Then, the model is $\bold{x = \boldsymbol{\mu} + \Lambda U + \boldsymbol{\epsilon}}$ where $\bold{\Lambda}$ is a p$\times$q matrix of factor loadings, the latent factors $\bold{U}$ $\sim$ N(0, $\bold{I}_q$) and $\boldsymbol{\epsilon} \sim$ N(0, $\bold{\Psi}_q$), where $\bold{\Psi}$ = diag($\Psi_1,\Psi_2, ..., \Psi_p$). With those orthogonal factor analysis model assumptions, the covariance among observed variables can be described as a linear combination of latent factors, $\bold{\Sigma = \Lambda\Lambda'+\Psi}$.\
+It implies that the marginal distribution of $\bold{x}$ follows a distribution with mean $\boldsymbol{\mu}$ and covariance $\bold{\Sigma = \Lambda\Lambda'+\Psi}$. The probability of an observation belonging to group $g$ is represented by $\pi_g$. Therefore, the mixture of factor analyzers model has density
+$$f(\bold{x}_i) = \sum_{g=1}^G\frac{\pi_g}{(2\pi)^{p/2}|\boldsymbol{\Lambda}_g\boldsymbol{\Lambda}_g'+\boldsymbol{\Psi}|^{1/2}}\times \text{exp}\biggl\{ -\frac{1}{2}(\bold{x}_i-\mu_g)'(\boldsymbol{\Lambda}_g\boldsymbol{\Lambda}_g'+\boldsymbol{\Psi})^{-1}(\bold{x}_i-\mu_g)\biggr\}.$$
+\\
+\textbf{2.5 High-dimensional data clustering}\\
+\\
+High-dimensional data clustering (HDC) combines the ideas of subspace clustering and parsimonious modeling, as discussed by \citet{bouveyron2007high}
+and \citet{bouveyron2014model}. Subspace clustering methods assume that each class within the data is situated on a distinct and unknown subspace. With this assumption, we can project the data points on to the distinct directions of orientation via eigen-decomposition, \\ 
+$$\boldsymbol{\Sigma}_g = \bold{Q}_g\bold{D}_g\bold{Q}_g',$$ \\
+where $\boldsymbol{Q}_g$ is a p$\times$p orthogonal matrix containing eigenvectors of $\boldsymbol{\Sigma}_g$ and $\bold{D}_g$ is a p$\times$p diagonal matrix with p eigenvalues sorted in decreasing order, where the first $q_g$ are distinct and the remaining ($p$-$q_g$) are the same. 
+This approach enables us to find clusters in different subspaces within a data set. Morever, we obtain parsimonious models by introducing a parameterization that fixes certain parameters to be shared across components. With constraining parameters, it provides lower cost computations in high-dimensional data.
+\\
+\section{Methodology} 
+The MLN distribution involves a covariance $\boldsymbol{\Sigma}$ which grows quadratically in size as the dimension increases. This growth can have a negative impact on clustering performance in high-dimensional spaces, especially when the number of variables is large. \citep{bouveyron2007high} However, due to the $\emph{`Empty space phenomenon'}$, we can assume that the majority of data points reside in lower-dimensional subspace. The original covariance $\boldsymbol{\Sigma}$ has $\frac{p(p+1)}{2}$ parameters but we consider two ways to reduce the number of parameter via factor analysis and HDC.\\
+\\
+\textbf{3.1 Factor analysis}\\
+\\
+We can develop a new class of MLN mixture models with parsimonious covariance structure by assuming a latent MLN for each population. With the orthogonal factor analysis model assumptions, the covariance among observed variables can be described as a linear combination of latent factors, $\bold{\Sigma = \Lambda\Lambda'+\Psi}$, where $\bold{\Lambda}$ is a p$\times$q matrix of factor loadings and $\bold{\Psi}$ = diag($\psi_1,\psi_2, ..., \psi_p$), where q $\ll$ p. Thus, we have $p\times q - q\times(q-1)+p$ parameters to estimate for $\bold{\Sigma}$ by applying factor analysis models to the covariance. \\
+\\
+We provide the update for $\boldsymbol{\Lambda}_g$ and $\boldsymbol{\Psi}_g$ matrices as discussed by \citet{mcnicholas2008parsimonious}. Table 1 represents a comprehensive range of constraints, resulting in eight distinct parsimonious covariance structures, as  discussed by \cite{mcnicholas2008parsimonious}. Specifically, the covariance structure UCU assumes the equal noise model, UUU assumes unequal noise, and UUC assumes unequal but isotropic noise. The remaining five structures involve constraints on the loading matrices, which leads to a substantial reduction in the number of covariance parameters.\\
+\\
+\begin {table}
+\caption {Parsimonious covariance structures derived from the mixture of FA} \label{tab:title} 
+\def\arraystretch{1.2}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c| } 
+\hline
+Model & Loading matrix & Error variance & Isotropic & Covariance parameters \\
+\hline
+CCC & Constrained & Constrained & Constrained & $[pq - q(q -1)/2]+1$ \\ 
+CCU & Constrained & Constrained & Unconstrained & $[pq - q(q -1)/2]+p$ \\ 
+CUC & Constrained & Unconstrained & Constrained & $[pq - q(q -1)/2]+G$ \\ 
+CUU & Constrained & Unconstrained & Unconstrained & $[pq - q(q -1)/2]+Gp$ \\ 
+UCC & Unconstrained & Constrained & Constrained & $G[pq - q(q -1)/2]+1$ \\ 
+UCU & Unconstrained & Constrained & Unconstrained & $G[pq - q(q -1)/2]+p$ \\ 
+UUC & Unconstrained & Unconstrained & Constrained & $G[pq - q(q -1)/2]+G$ \\ 
+UUU & Unconstrained & Unconstrained & Unconstrained & $G[pq -q(q-1)/2]+Gp$ \\ 
+\hline
+\end{tabular}
+\end{center}
+\end {table}\\
+\\
+\textbf{3.2 High-dimensional data clustering}\\
+\\
+We can apply the HDC methodology to the covariance parameter $\bold{\Sigma}_g$, g = 1,...,G, as discussed by \citet{bouveyron2007high} and \citet{kim2019subspace}. Since $\bold{\Sigma}_g$ is a positive definite $p \times p$ matrix, it is proposed to constraint the mixtures of MLN distribution through the eigen-decomposition of the covariance $\bold{\Sigma}_g$ of the $g$th group:
+\\
+$$\bold{\Sigma}_g = [\bold{\Gamma}_g\bold{\Theta}_g]\bold{D}_g[\bold{\Gamma}_g\bold{\Theta}_g]',$$ 
+\\
+where $\bold{D}_g$ is a ${p\times p}$ diagonal matrix containing $p$ eigenvalues of $\bold{\Sigma}_g$ in descending order, and $[\bold{\Gamma}_g\bold{\Theta}_g]$ is a ${p\times p}$ orthogonal matrix whose columns are eigenvectors corresponding to the eigenvalues in $\bold{D}_g$. $\bold{\Gamma}_g$ is the matrix with the left $q$ columns of $[\bold{\Gamma}_g\bold{\Theta}_g]$, and $\boldsymbol{\Theta}_g$ includes the remaining columns.\\
+\\
+HDC relies on two assumptions. First, we assume that each cluster has an intrinsic dimension, denoted as $q_g$, where $g$ = 1 ... G. The dimension $q_g$ is significantly smaller than the total number of variables, $p$. Through this, we can project the data points onto the $q_g$-dimensional eigenspace of the covariance matrix, $\bold{\Sigma}_g$. This projection involves using the first $q_g$ columns of the matrix $[\bold{\Gamma}_g\bold{\Theta}_g]$, which represent the distinct directions of orientation. Additionally, we can set the last $(p - q_g)$ eigenvalues to have the same value. This assumption indicates that the remaining directions are indistinguishable.\\
+\\
+The following calculation on the Mahalanobis distance component in the density function of MLN illustrates the above idea with $r = x-\mu$,
+\\
+$$\delta(\bold{x}|\bold{\Sigma}) = \bold{x'\Sigma}^{-1} \bold{x} 
+= \sum_{j=1}^q \lambda_j \|\boldsymbol{\gamma}_j\bold{x}\|^2+\eta(\bold{x'x} - \sum_{j=1}^q\|\boldsymbol{\gamma}_j\bold{x}\|^2)
+= \sum_{j=1}^q(\lambda_j-\eta)\|\boldsymbol{\gamma}_j \bold{x}\|^2 + \eta\:\bold{x'x},$$
+\\
+where $\boldsymbol{\lambda}_j$ : j = 1, ..., d are the first $d$ eigenvalues of $\bold{D}$, $\boldsymbol{\gamma}_j$ is the first $q$ eigenvectors of $\bold{\Sigma}_g$ or the first q eigenvectors of $\Gamma_g$, and $\eta$ is the remaining $(p-q_g)$ eigenvalues. Therefore, we have $q+1+pq-\frac{q(q+1)}{2}$ parameters for $\bold{\Sigma}$ by HDC.\\
+\\
+We examine the various models with different assumptions about the intrinsic dimension and orientation of the data set, as described in Table 2. This table lists out the full range of possible constraints provides a class of sixteen different parsimonious MLN mixture models. It shows that a model with constraints on eigenvectors and eigenvalues can reduce the number of parameters.
+\begin {table}
+\caption {Parsimonious covariance structures derived from HDC} \label{tab:title} 
+\def\arraystretch{1.2}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c| } 
+\hline
+Model & Eigenvectors & Eigenvalues & Remaining & Covariance parameters \\
+& & & eigenvalues & \\
+\hline
+VVV & Unconstrained & Unconstrained & Unconstrained & $[Gq( p - (q+1)/2 )+Gq]+G$ \\ 
+VVE & Unconstrained & Unconstrained & Constrained & $[Gq( p - (q+1)/2 )+Gq]+1$ \\ 
+VGV & Unconstrained & Equal within each $g$ & Unconstrained & $[Gq( p - (q+1)/2 )+G]+G$ \\ 
+VCV & Unconstrained & Mean across $g$ & Unconstrained & $[Gq( p - (q+1)/2 )+1]+G$ \\ 
+VGE & Unconstrained & Equal within each $g$& Constrained & $[Gq( p - (q+1)/2 )+G]+1$ \\ 
+VEV & Unconstrained & Constrained across $g$ & Unconstrained & $[Gq( p - (q+1)/2 )+q]+G$ \\ 
+VEE & Unconstrained & Constrained across $g$ & Constrained & $[Gq( p - (q+1)/2 )+q]+1$ \\ 
+VCE & Unconstrained & Mean across $g$ & Constrained & $[Gq( p - (q+1)/2 )+1]+1$ \\
+EEE & Constrained & Constrained across $g$ & Constrained & $[q( p - (q+1)/2 )+q]+1$ \\
+EGV & Constrained & Equal within each $g$ & Unconstrained & $[q( p - (q+1)/2 )+G]+G$ \\
+EGE & Constrained & Equal within each $g$ & Constrained & $[q( p - (q+1)/2 )+G]+1$ \\
+ECV & Constrained & Mean across $g$ & Unconstrained & $[q( p - (q+1)/2 )+1]+G$ \\
+ECE & Constrained & Mean across $g$ & Constrained & $[q( p - (q+1)/2 )+1]+1$ \\
+EVV & Constrained & Unconstrained & Unconstrained & $[q( p - (q+1)/2 )+Gq]+G$ \\
+EVE & Constrained & Unconstrained & Constrained & $[q( p - (q+1)/2 )+Gq]+1$ \\
+EEV & Constrained & Constrained across $g$ & Unconstrained & $[q( p - (q+1)/2 )+q]+G$ \\
+\hline
+\end{tabular}
+\end{center}
+\end {table}\\
+\\
+\section{Parameter estimation}
+We use maximum likelihood for parameter estimation in MLN. Specifically, the Expectation-Maximization (EM) algorithm by \cite{bouveyron2014model} and \cite{browne2022revitalizing}, which is a special case of the broader Majorize-Minimization algorithm by \cite{hunter2004tutorial}, is applied here. The complete data set, denoted as $\{(x_i,z_i)\}_{i=1}^n$, plays a key role in this estimation process. Each pair $(x_i, z_i)$ represents an observation $x_i$ and its associated component membership $z_i$, where $z_i$ = $(z_{i1},z_{i2},...,z_{iG})$. This complete data set captures all available information for the analysis. To quantify the likelihood of the observed data under the mixture model, we define the complete data likelihood as follows:
+$$L(\boldsymbol{\theta}) = \prod_{i=1}^n\prod_{g=1}^{G} \bigl[\pi_gf(\bold{x}_i|\boldsymbol{\mu}_g,\pi_g,\boldsymbol{\Sigma}_g,\beta_g)\bigr]^{z_{ig}},$$
+where $\boldsymbol{\theta}$ represents the set of all parameters involved in the model. The expected value of the missing data given the observed data $x_i$ and the current parameter values (at iteration $j$) is 
+\\
+$$\hat{w}_{ig}^{(j)} = E\bigl[z_{ig}|\bold{x}_i,\boldsymbol{\theta}_g^{(j)}\bigr] = \frac{\pi_g^{(j)}f\Bigl(\bold{x}_i|\boldsymbol{\mu}_g^{(j)},\pi_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\Bigr)}{\sum_{h=1}^G\pi_h^{(j)}f\Bigl(\bold{x}_i|\boldsymbol{\mu}_h^{(j)},\pi_h^{(j)},\boldsymbol{\Sigma}_h^{(j)},\beta_h^{(j)}\Bigr)}.$$
+\\
+Using these expected values we can construct the expected complete log-likelihood
+\\
+\begin{equation}
+\sum_{i=1}^n\sum_{g=1}^G\hat{w}_{ig}^{(j)}\bigl[\text{log}\pi_g+\text{log}f(\bold{x}_i|\boldsymbol{\mu_g},\boldsymbol{\Sigma_g},\beta_g)\bigr].
+\end{equation}
+\\ 
+Following Browne (2023) we have the fixed point approximation in (1), 
+\\
+\begin{equation}
+\text{log}f(\bold{x}|\bold{\theta}) = -\frac{1}{2}\text{log}|\Sigma|-\frac{1}{2} \text{tr}\Bigl[\bigl(\boldsymbol{\Sigma}_g^{(j)}\bigr)^{-1}\mathbf{A}\Bigr],
+\end{equation}
+where $$\mathbf{A} = \sum_{i=1}^{n}w_{ig}k_i\bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\bigr)(\boldsymbol{x}_i-\boldsymbol{\mu}_g)(\boldsymbol{x}_i-\boldsymbol{\mu}_g)'.$$
+\\
+To obtain updates, we maximize the expected complete log-likelihood. The update for $\pi_g$ is 
+\begin{equation}
+\pi_g^{(j+1)}=n_g^{(j)}/n,    
+\end{equation}
+where $n_g^{(j)}=\sum_{i=1}^nw_{ig}^{(j)}$. We can construct the surrogate function (2) using expected values as discussed by \cite{browne2022revitalizing}. 
+\\
+\begin{equation}
+S\Bigl(\boldsymbol{\theta}_g^{(j)}\Bigr) = \sum_{g=1}^{G}n_g^{(j)} \text{log}\pi_g^{(j)} - \frac{np}{2}\text{log}( 2 \pi ) - \sum_{g=1}^G\frac{n_g^{(j)}}{2} \text{log}|\boldsymbol{\Sigma}_g^{(j)}|\\
+\end{equation}
+$$-\frac{M}{2}\sum_{g=1}^G\text{tr}\Bigl[\bigl(\boldsymbol{\Sigma}_g^{(j)}\bigr)^{-1}\sum_{i=1}^{n}w_{ig}^{(j)}k_i\bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\bigr)\bigl(x_i-\boldsymbol{\mu}_g^{(j)}\bigr)\bigl(x_i-\boldsymbol{\mu}_g^{(j)}\bigr)'\Bigr],$$
+$$\text{where}\quad k_i(\boldsymbol{\mu,\Sigma},\beta) = 1-2\;\frac{\beta g'\bigl[(\boldsymbol{x_i-\mu})^{\top}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x_i-\mu})\bigr]}{1+\beta g\bigl[(\boldsymbol{x_i-\mu})^{\top}\boldsymbol{\Sigma}^{-1}(\boldsymbol{x_i-\mu})\bigr]}$$
+\\
+with a boundary condition for $k_i(\cdot)\in\;$[0,1]. By taking the derivative and solving, it yields the following update for $\boldsymbol{\mu}_g$ and $\beta_g$. Then, the update for 
+$\boldsymbol{\mu}_g$ is
+\\ \\
+\begin{equation}
+\boldsymbol{\mu}_g^{(j+1)}=\frac{\sum_{i=1}^nw_{ig}^{(j)}k_i\Bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\Bigr)\boldsymbol{x_i}}{\sum_{i=1}^nw_{ig}^{(j)}k_i\Bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\Bigr)}.
+\end{equation}
+\\ \\
+For the parameter $\beta_g$, \cite{browne2022revitalizing} showed that the log-likelihood in terms of $\beta_g$ is a self-concordant function with respect to the parameter $\beta_g$. Self-concordant functions yield a bound on the number of Newton steps needed to minimize a function, as explained by \cite{boyd2004convex}.\\
+\\
+An unconstrained Newton step for $\beta_g$ is
+\\ \\
+\begin{equation}
+\beta_g^{(j+1)} = \beta_g^{(j)}+\frac{\sum_{i=1}^nw_{ig}\gamma_i\Bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\Bigr)}{\sum_{i=1}^nw_{ig}\gamma_i\Bigl(\boldsymbol{\mu}_g^{(j)},\boldsymbol{\Sigma}_g^{(j)},\beta_g^{(j)}\Bigr)^2},
+\end{equation}
+where $$\gamma_i(\boldsymbol{\mu,\Sigma},\beta) = \frac{\beta g\bigl[(\boldsymbol{x}_i-\boldsymbol{\mu})^{\top}\bold{\Sigma}^{-1}(\boldsymbol{x}_i-\boldsymbol{\mu})\bigr]}{1+\beta g\bigl[(\boldsymbol{x}_i-\boldsymbol{\mu})^{\top}\Sigma^{-1}(\boldsymbol{x}_i-\boldsymbol{\mu})\bigr]},$$
+\\ \\
+with a boundary condition for $\beta$ \citep{bagnato2017multivariate}, $\beta \in [0,$\text{min}(4d,4d(d+2)/5)$]$. We apply this update while maintaining that $\beta_g$ stays within the range of unimodality. Then, for $\boldsymbol{\Sigma}_g$ we consider two different covariance structures; a high-dimensional data clustering and a factor analysis.\\
+\\
+\textbf{4.1 Factor analysis}\\
+\\
+We present the two procedures for estimating $\boldsymbol{\Sigma}_g$ with the structure given by high-dimensional data clustering and factor analysis. Note two methods have the same updates for $\pi_g$, $\bold{\mu}_g$ and $\beta_g$ given in equations (3), (5), and (6). In factor analysis the covariance parameters are $\boldsymbol{\Lambda}$ and $\boldsymbol{\Psi}$. At iteration $q$, with $\boldsymbol{\mu}_g = \boldsymbol{\mu}_g^{(j+1)}$, $\pi_g = \pi_g^{(j+1)}$, $w_{ig}=w_{ig}^{(j+1)}$ and $\beta_g = \beta_g^{(q+1)}$, the surrogate function for the component g can be defined as (1).\\
+\\
+We apply the Majorize-Minimization algorithm \citep{hunter2004tutorial} to this objective function. The following function $Q$ is a majorizing function for the objective function $F$. Appendix A shows that $Q$ is a  majorizing function. Here, a function $Q\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr)$ is said to majorize the function $F(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g)$ at $\boldsymbol{\mu}_g,\pi_g, w_{ig}, \beta_g$ provided
+\\
+$$Q\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr) \geq F\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g\bigr) \quad \forall \boldsymbol{\Lambda},\boldsymbol{\Psi},$$
+$$Q\bigl(\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr) = F\bigl(\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr)$$
+\\
+In the Majorize-Minimization algorithm, we minimize the majorizing function $Q\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr)$ rather than the actual function $F\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g\bigr)$. Then, the update for $\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g$ is estimated by 
+\\
+$$\bigl(\boldsymbol{\Lambda}_g^{(j+1)},\boldsymbol{\Psi}_g^{(j+1)}\bigr)\;=\;\underset{\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g}{\mathrm{argmin}}\;Q(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}),$$
+when $Q\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr)$ majorizes $F\bigl(\boldsymbol{\Lambda}_g,\boldsymbol{\Psi}_g\bigr).$ We iterate until $\boldsymbol{\Lambda}_g^{(j)}, \boldsymbol{\Psi}_g^{(j)}$ converges. Then, the resulting procedure is similar to the alternating expectation-conditional maximization (AECM) algorithm as discussed by \cite{meng1993maximum}.
+%The descent property,\\ $$F\bigl(\boldsymbol{\Lambda}_g^{(j+1)},\boldsymbol{\Psi}_g^{(j+1)}\bigr)\leq Q\bigl(\boldsymbol{\Lambda}_g^{(j+1)},\boldsymbol{\Psi}_g^{(j+1)}|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr)\leq Q\bigl(\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}|\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr) = F\bigl(\boldsymbol{\Lambda}_g^{(j)},\boldsymbol{\Psi}_g^{(j)}\bigr),$$ 
+%\\
+%leads to numerical stability in this algorithm.\\
+\\ 
+\textbf{4.2 High-dimensional data clustering}\\
+\\
+In high-dimensional data clustering, the covariance parameters are $\phi_{gj}$, $\gamma_g$, and $\eta_g$. The $q_g$ distinct eigenvalues $\phi_{gj}$ and corresponding eigenvectors $\gamma_g$ are obtained via eigen-decomposition of $\bold{A}_g$. The remaining $(p-q_g)$ eigenvalues are estimated by
+\\
+$$\eta_g^{(j+1)} = \frac{1}{p-q_g^{(j+1)}}\Biggl[\text{tr}\Bigl(\bold{A}_g^{(j+1)}-\sum_{k=1}^{q_g}\phi_{gk}^{(j+1)}\Bigr)\Biggr],$$
+\\
+where $q_g$ is an intrinsic dimension, and k=1,2,3 ..., $q_g$, and $g$ = 1,...,G.\\
+\\
+\textbf{4.3 Computational issues}\\
+\\
+Aitken's acceleration is used to measure the convergence of a model during the EM algorithm. The log-likelihood value of the model at each iteration is estimated asymptotically to assess the level of convergence, as discussed in  \cite{kim2019subspace} and \cite{mcnicholas2008parsimonious}. At the $k^{th}$ iteration, the asymptotic estimate of the log-likelihood, denoted as $l_\infty^{k}$, is calculated using the formula: 
+$$l_{\infty}^{(k)} = l^{(k)}+\frac{1}{1-a^{(k)}}\Bigl(l^{(k+1)}-l^{(k)}\Bigr),$$
+where $l^{(k)}$ represents the log-likelihood at the $k^{th}$ iteration, and $a^{(k)}$ is the ratio of the differences in log-likelihood between iterations k and k-1, and between iterations k+1 and k. The algorithm can be stopped when the difference between $l_\infty^{(k)}$ and $l^{(k)}$ is positive and less than a pre-defined threshold value $\epsilon>0$. The latter criterion is used for all models, with $\epsilon$ = $10^{-4}$.\\
+\\
+\cite{mcnicholas2008parsimonious} suggested the Bayesian information criterion \citep{schwarz1978estimating} for selecting the appropriate $\boldsymbol{\Sigma}$. In the context of a model with parameters $\theta$, the BIC is calculated as follows:
+$$ \text{BIC} = 2l(\hat{\theta})-p\text{log}(n),$$
+where $l(\hat{\theta})$ is the maximized log-likelihood of a model, $\hat{\theta}$ is the maximum likelihood estimate of $\theta$, $p$ represents the number of free parameters in the model and $n$ represents the number of observations. We test them using $q$ ranging from 1 to $q-1$, where $q$ represents the full dimension of the data set, in factor analysis and HDC, respectively. Then, the most appropriate $\boldsymbol{\Sigma}$ for each number of latent factors and intrinsic dimension will be chosen in each methodology. 
+\section{Analyses on simulation}
+We conduct an evaluation of FA and HDC using simulated data sets.
+Both FA and HDC utilize the same randomly generated initial values. We generate a data set comprising 1000 observations based on a two-component ($g$ = 2) MLN mixture model. The model parameters are as follows:
+$$ \quad (\pi_1,\pi_2) = \Bigl( \frac{1}{2}, \frac{1}{2} \Bigr), \quad {\boldsymbol{\mu}_1,\boldsymbol{\mu}_2} = \{-2\bold{1}_d, +2\bold{1}_d\}, \quad \boldsymbol{\Sigma}_1 = \boldsymbol{\Sigma}_2 = \bold{I}_d, \quad \text{and} \quad \beta_1 = \beta_2 = \frac{4d(d+2)}{(d+4)}. $$
+\\
+\begin {table}
+\caption {Number of times each parsimonious model was selected by BIC. Each column represents a summary of 100 data sets generated from a MLN mixture model using FA covariance structures.} \label{tab:title} 
+\def\arraystretch{1.2}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|} 
+\hline
+Selected Model& $q$ = 1 & $q$ = 2 & $q$ = 3 & $q$ = 4 & $q$ = 5 & $q$ = 6 & $q$ = 7 & $q$ = 8 & $q$ = 9 \\
+\hline
+CUCC & 16 & 18 & 14 & 26& 16& 19&14&9&17\\
+CUCU & 84 & 82 & 86 & 74& 80& 79&78&83&74\\
+UCCC &  &  &  & & 2&2&1&1&1\\
+UCCU &  &  &  & & 2&&7&7&8\\
+\hline
+Total& 100 & 100 & 100 & 100&100&100&100&100&100\\
+\hline
+\end{tabular}
+\end{center}
+\end {table}
+\\
+\begin {table}
+\caption {Number of times each parsimonious model was selected by BIC. Each column represents a summary of 100 data sets generated from a MLN mixture model using HDC covariance structures.} \label{tab:title} 
+\def\arraystretch{1.2}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c|c|c|c|} 
+\hline
+Selected Model& $q$ = 1 & $q$ = 2 & $q$ = 3 & $q$ = 4 & $q$ = 5 & $q$ = 6 & $q$ = 7 & $q$ = 8 & $q$ = 9 \\ 
+\hline
+EEEE & 60 & 41 & 31 & 26 & 29 & 31 & 31 & 29 & 26 \\
+EVVE & 26 & 46 & 55 & 66 & 60 & 67 & 64 & 67 & 66 \\
+EGVE & 13 & 13 & 12 & 6 & 6 & & & &  \\
+EEVE & 1 & & & 1 & 1 & & 1 & & \\
+EVVV & & & 2 & 1 & 3 & 2 & 2 & 4 & 7 \\
+EEEV & & &  &  & 1 & &  &  & \\
+VVEE & & &  &  &  & & 2 &  & 1 \\
+\hline
+Total& 100 & 100 & 100 & 100&100&100&100&100&100\\
+\hline
+\end{tabular}
+\end{center}
+\end {table} 
+In our simulations, we fix the number of variables $d$ to be 10, but vary the number of factors $q$ and intrinsic dimension $q$ to be 1, 2, 3, ..., $q-1$. EM algorithm is initialized using k-means clustering, and each experiment is replicated 100 times. During the iterative process, parameters such as $\boldsymbol{\mu}_g$, $\boldsymbol{\beta}_g$, and $\boldsymbol{\Sigma}_g$ for each component $g$ are updated until convergence was achieved. The Aitken acceleration is utilized as a stopping criterion with a tolerance set to $10^{-4}$. \\
+\\
+As an initial comparison we count the number of times each covariance model is selected using the BIC across multiple replications. This analysis is conducted while varying the number of factors denoted as $q$ and the intrinsic dimension $q$. The outcomes are presented in Tables 3 and 4, providing an overview of how each model was chosen under varying $q$ values. Interesting, the covariance structure CUCU consistently emerged as the most frequently selected covariance model in FA across all $q$ values. However, when $q$ was equal to 1, the EEEE covariance exhibited dominance, while EVVE was chosen more often in all other cases of $q$.\\
+\\
+A secondary analysis is performed to assess the behavior of FA and HDC when fitting finite mixture models. We consider different scenarios with varying numbers of components $G$ = 1, 2, 3, and different numbers of factors, denoted as $q$ = 1, 2, 3, 4, 5. In each case, both algorithms are iterated until convergence using identical initial values. Table 5 presents the mean computational time, log-likelihood at convergence, and iteration count for each combination of $G$ and $q$. Notably, for $G$ = 1, both FA and HDC yielded lower log-likelihood values, whereas $G$ = 2 or 3 resulted in higher log-likelihoods. HDC consistently demonstrated faster convergence times than FA, regardless of the $q$ value. However, FA consistently required the longest convergence time, especially for $q$ = 2 or 3 across all $G$ values. Furthermore, HDC exhibited fewer iterations to reach convergence compared to FA, regardless of $G$ or $q$. These findings underscore HDC's efficiency in terms of both time and iterations across varying $G$ and $q$ scenarios, as compared to FA.
+\\
+\begin {table}
+\caption {The average computational time, log-likelihood and number of iterations until convergence or reaching the maximum iterations of 5,000 for each algorithm. $G$ represents the number of components.} \label{tab:title} 
+\begin{center}
+\def\arraystretch{1.5}
+\begin{tabular}{ |c|c|c|c|c|c| } 
+\hline
+ & $G$ & $q$ & Time & Loglik & Iteration\\
+\hline
+FA&1&	1&0.58	&-19866.41&	129.75\\
+FA&1&	2&13.10&	-19859.78&	3076.17\\
+FA&1&	3&22.60&	-19885.78&	4316.14\\
+FA&1&	4&4.81&	-19888.42&	929.24\\
+FA&1&	5&4.18&	-19877.41&	823.45\\
+FA&2&	1&52.66&	-17733.12	&3975.56\\
+FA&2&	2&53.31&	-17695.47&	4922.18\\
+FA&2&	3&52.08&	-17727.92&	4999\\
+FA&2&	4&21.60&	-17741.53&	2050.67\\
+FA&2&	5&0.83&	-17738.79&	72.73\\
+FA&3&	1&67.60&	-17717.06&	4562.31\\
+FA&3&	2&72.74&	-17685.04&	4968.53\\
+FA&3&	3&73.47&	-17702.97&	4999\\
+FA&3&	4&43.13&	-17682.18&	2928.09\\
+FA&3&	5&19.71&	-17695.97&	1320.17\\
+\hline
+HDC&1&	1&0.13&	-19894.18&	18.37\\
+HDC&1&	2&	0.12&	-19874.65&	18.59\\
+HDC&1&	3&0.12& -19865.44	&18.74\\
+HDC&1&	4&	0.13	&-19882.92	&18.78\\
+HDC&1&	5&	0.13	&-19879.75	&18.98\\
+HDC&2&	1&	0.21	&-17713.69	&15.46\\
+HDC&2&	2& 0.22	&-17747.96	&15.73\\
+HDC&2&	3&	0.23	&-17741.05	&15.86\\
+HDC&2&	4& 0.23	&-17753.05	&16.11\\
+HDC&2&	5&	0.25	&-17738.16	&16.16\\
+HDC&3&	1&	22.78&	-17733.35&	1682.65\\
+HDC&3&	2&	20.40&	-17725.61&	1697.37\\
+HDC&3&	3&	27.87&	-17733.62&	1599.74\\
+HDC&3&	4&	29.63&	-17732.29	&1678.08\\
+HDC&3&	5&	31.42&	-17708.75&	1677.66\\
+\hline
+\end{tabular}
+\end{center} 
+\end {table}
+\section{Conclusion} 
+In this paper, we introduce subspace clustering methodologies for the finite mixture of multivariate leptokurtic-normal distributions. Additionally, we apply a parsimonious model by imposing constraints on the component covariance models and excess kurtoses. The covariance models are estimated using two different methodologies, involving FA and HDC, while the rest of the parameters are estimated using the fixed-point approximation. Two methodologies are assessed by mean computational time, log-likelihood at convergence, and iteration count for each combination of $G$ and $q$ and the number of times each covariance model is selected varying $q$. Moreover, the proposed methods can be compared in terms of computation time, the number of iterations, log-likelihood and BIC using real data.
+\\
+\section{Appendix A} 
+Setup for two surrogate functions
+\\
+$$-\frac{1}{2}\text{log}|\boldsymbol{\Lambda\Lambda}'+\boldsymbol{\Psi}|-\frac{1}{2}\text{tr}[(\boldsymbol{\Lambda\Lambda}'+\boldsymbol{\Psi})^{-1}\mathbf{S}]$$
+\\
+using the matrix determinant Lemma
+\\
+$$\text{log}|\bold{\Lambda\Lambda'+\Psi}|=\text{log}|\bold{\Psi}|+\text{log}|\bold{I_q+\Lambda'\Psi^{-1}\Lambda}|.$$
+\\
+Then since the function $\text{log}|\bold{X}|$ is convex we have
+\\
+$$\text{log}|\bold{X}|\geq \text{log}|\bold{A}|+\text{tr}[\bold{A^{-1}(X-A)}]=\text{log}|\bold{A}|+\text{tr}[\bold{A^{-1}}X-I]$$
+\\
+for any positive matrices $\bold{A}$ and $\bold{X}$. Letting $\bold{X = I_q + \Lambda'\Psi^{-1}\Lambda}$ and
+\\
+$$\text{log}|\bold{I_q + \Lambda'\Psi^{-1}\Lambda}| \geq \text{log}|\bold{A}| + \text{tr}[\bold{A^{-1}(I_q+\Lambda'\Psi^{-1}\Lambda)-I_q}].$$
+\\
+Now for $\text{tr}[(\bold{\Lambda\Lambda'+\Psi})^{-1}\bold{S}],$ consider the following for any $\bold{\vecbeta,\: \vecbeta_0}\:\in\: M_{pq}$
+\\
+$$\bold{0} \preceq (\bold{\vecbeta-\vecbeta_0)'(I+\Lambda'\Psi\Lambda)(\vecbeta-\vecbeta_0})$$
+$$\preceq \bold{\vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\vecbeta_0'(I+\Lambda'\Psi\Lambda)\vecbeta-\vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta_0+\vecbeta_0'(I+\Lambda'\Psi\Lambda)\vecbeta_0}, \quad (1)$$
+\\
+where $\bold{A\preceq B}$ means that $\bold{B-A}$ is semi-positive. This matrix is semi-positive if $\bold{\vecbeta \neq \vecbeta_0}$ and equal to zero when $\bold{\vecbeta = \vecbeta_0}$.\\
+\\
+Now if 
+$$\bold{\vecbeta_0 = \Lambda'(\Lambda\Lambda'+\Psi)^{-1} = (I+\Lambda'\Psi\Lambda)^{-1}\Lambda'\Psi^{-1}},$$
+apply this to (1) to obtain \\
+$$\bold{0 \preceq \vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\Psi^{-1}\Lambda\vecbeta-\vecbeta'\Lambda'\Psi^{-1}+\Psi^{-1}\Lambda(I-\Lambda'\Psi\Lambda)^{-1}\Lambda'\Psi^{-1}}.$$
+\\
+Then, adding and substracting $\bold{\Psi}$ using the woodbury identity yields 
+\\
+$$\bold{0\preceq \vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\Psi^{-1}\Lambda\vecbeta-\vecbeta'\Lambda'\Psi}^{-1}+\bold{\Psi}^{-1}-[\bold{\Psi}^{-1}-\bold{\Lambda(I+\Lambda'\Psi\Lambda)}^{-1}\bold{\Lambda'\Psi}^{-1}]$$
+$$\bold{0\preceq \vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\Psi^{-1}\Lambda\vecbeta-\vecbeta'\Lambda'\Psi}^{-1}+\bold{\Psi}^{-1}-\bold{(\Lambda\Lambda'+\Psi)^{-1}}$$
+$$\bold{\Lambda\Lambda'+\Psi \preceq \vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\Psi^{-1}\Lambda\vecbeta-\vecbeta'\Lambda'\Psi}^{-1}$$
+\\
+with equality when $\bold{\vecbeta=\vecbeta_0=\Lambda'(\Lambda\Lambda'+\Psi)^{-1}}.$
+It implies that \\
+$$\text{tr}[\bold{(\Lambda\Lambda'+\Psi)^{-1}S]} \leq \text{tr}[\bold{\vecbeta'(I+\Lambda'\Psi\Lambda)\vecbeta-\Psi^{-1}\Lambda\vecbeta-\vecbeta'\Lambda'\Psi}^{-1}\bold{S}]$$ \\
+with equality when $\bold{\vecbeta=\vecbeta_0=\Lambda'(\Lambda\Lambda'+\Psi)^{-1}}$
+%\bibliographystyle{plain} 
+%\bibliographystyle{chicago}
+\bibliographystyle{apalike}
+\bibliography{refs} 
+\end{document}
+
